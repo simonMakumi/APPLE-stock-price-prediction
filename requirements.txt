@@ -2,5 +2,6 @@ streamlit
 numpy
 pandas
 keras==3.4.1
+tensorflow
 scikit-learn
 pillow
