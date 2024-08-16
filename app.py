@@ -23,7 +23,6 @@ scaled_data = scaler.fit_transform(dataset)
 test_data = scaled_data[training_data_len - 60:, :]
 x_test = []
 y_test = dataset[training_data_len:, :]
-test_dates = data['Date'][training_data_len:].reset_index(drop=True)
 
 for i in range(60, len(test_data)):
     x_test.append(test_data[i-60:i, 0])
@@ -46,7 +45,6 @@ if page == "Home":
     This app allows you to predict future stock prices using a Long Short-Term Memory (LSTM) model, a type of recurrent neural network
     known for its effectiveness in time series forecasting.
     
-    
     ### Disclaimer
     Please note that this app is for educational purposes only. The predictions provided should not be used as financial advice or for
     making investment decisions.
@@ -56,26 +54,53 @@ elif page == "Prediction":
     st.title('Apple Stock Price Prediction')
 
     # Select date and period for prediction
-    start_date = st.date_input('Select Start Date', min_value=data['Date'].min(), max_value=data['Date'].max())
+    start_date = st.date_input('Select Start Date', min_value=data['Date'].min(), max_value=datetime.now().date())
     period = st.selectbox('Select Prediction Period', ['One Day', 'One Week', 'Two Weeks', 'One Month', 'Two Months', 'One Year'])
 
+    # Determine the number of days to predict
+    days_to_predict = 1
+    if period == 'One Day':
+        days_to_predict = 1
+    elif period == 'One Week':
+        days_to_predict = 7
+    elif period == 'Two Weeks':
+        days_to_predict = 14
+    elif period == 'One Month':
+        days_to_predict = 30
+    elif period == 'Two Months':
+        days_to_predict = 60
+    elif period == 'One Year':
+        days_to_predict = 365
+
     if st.button('Predict'):
-        # Get predictions
-        predictions = model.predict(x_test)
-        predictions = scaler.inverse_transform(predictions)
+        # Prepare the last 60 days data for prediction
+        last_60_days = scaled_data[-60:]
+        future_predictions = []
+        future_dates = [start_date + timedelta(days=i) for i in range(1, days_to_predict + 1)]
+
+        for _ in range(days_to_predict):
+            x_future = np.array([last_60_days])
+            x_future = np.reshape(x_future, (x_future.shape[0], x_future.shape[1], 1))
+            pred_price = model.predict(x_future)
+            pred_price = scaler.inverse_transform(pred_price)
+            future_predictions.append(pred_price[0][0])
+
+            # Update last_60_days with the predicted price for the next prediction
+            new_row = scaler.transform([[pred_price[0][0]]])
+            last_60_days = np.append(last_60_days[1:], new_row, axis=0)
 
         if period == 'One Day':
-            st.subheader(f'Prediction for {test_dates.iloc[-1].date()}')
-            st.write(f"${predictions[-1][0]:.2f}")
+            st.subheader(f'Prediction for {future_dates[-1]}')
+            st.write(f"${future_predictions[-1]:.2f}")
         
         elif period == 'One Week':
-            st.subheader(f'Predictions for the last week:')
-            for i in range(-7, 0):
-                st.write(f"{test_dates.iloc[i].date()}: ${predictions[i][0]:.2f}")
+            st.subheader(f'Predictions for the next week:')
+            for i in range(7):
+                st.write(f"{future_dates[i]}: ${future_predictions[i]:.2f}")
         
         else:
-            st.subheader(f'Prediction for {test_dates.iloc[-1].date()}')
-            st.write(f"${predictions[-1][0]:.2f}")
+            st.subheader(f'Prediction for {future_dates[-1]}')
+            st.write(f"${future_predictions[-1]:.2f}")
         
 
 elif page == "About":
