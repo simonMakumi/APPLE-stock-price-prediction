@@ -43,14 +43,13 @@ if page == "Home":
     st.header("Welcome to the Apple Stock Price Prediction App")
     st.write("""
     Apple Inc. is one of the world's leading technology companies, and its stock prices are closely monitored by investors worldwide. 
-    This app allows you to predict future stock prices using a Long Short-Term Memory (LSTM) model, a type of recurrent neural network known for its effectiveness in time series forecasting.
+    This app allows you to predict future stock prices using a Long Short-Term Memory (LSTM) model, a type of recurrent neural network
+    known for its effectiveness in time series forecasting.
     
-    ### Model Explanation
-    The LSTM model is trained on historical Apple stock price data, including closing prices and interest rates. 
-    By learning patterns in this data, the model can predict future stock prices with a reasonable degree of accuracy.
     
     ### Disclaimer
-    Please note that this app is for educational purposes only. The predictions provided should not be used as financial advice or for making investment decisions.
+    Please note that this app is for educational purposes only. The predictions provided should not be used as financial advice or for
+    making investment decisions.
     """)
 
 elif page == "Prediction":
@@ -78,17 +77,12 @@ elif page == "Prediction":
             st.subheader(f'Prediction for {test_dates.iloc[-1].date()}')
             st.write(f"${predictions[-1][0]:.2f}")
         
-        # Calculate and display RMSE
-        rmse = np.sqrt(np.mean((predictions - y_test) ** 2))
-        st.subheader('Root Mean Squared Error (RMSE)')
-        st.write(rmse)
 
 elif page == "About":
     st.title("About the Project")
-    st.header("Moringa School Capstone Project")
-    st.write("""
-    This project is part of the Moringa School Data Science curriculum, completed by **The iStock Analysts**. 
-    The project focuses on predicting Apple Inc.'s stock prices using an LSTM model, combining both historical stock prices and interest rates.
+    st.write(""" 
+    The project focuses on predicting Apple Inc.'s stock prices using an LSTM model, combining both historical stock prices and interest
+    rates.
     """)
 
     st.subheader("Team Members")
@@ -97,11 +91,10 @@ elif page == "About":
     st.write("**Kelsey Maina**: [GitHub](https://github.com/Kelsey-Maina)")
     st.write("**Esther Njagi**: [GitHub](https://github.com/emukami2)")
     
-    #st.image('path_to_image/team.png', use_column_width=True)  # Example team image
-
     st.subheader("Summary")
     st.write("""
     The iStock Analysts have developed this predictive model as a demonstration of time series analysis and machine learning techniques.
-    While the model provides predictions based on historical data, it's important to remember that past performance does not guarantee future results.
+    While the model provides predictions based on historical data, it's important to remember that past performance does not guarantee
+    future results.
     The project was a collaborative effort, showcasing the skills and teamwork of all members involved.
     """)
