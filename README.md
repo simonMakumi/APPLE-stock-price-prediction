@@ -48,5 +48,5 @@ As mentioned before included in this repository is the complete project document
 
 * To run the app locally run the following on terminal:
     ```
-    streamlit run deployment/africura_final.py
+    streamlit run app.py
     ```
