@@ -2,5 +2,9 @@ streamlit
 numpy
 pandas
 keras==3.4.1
+<<<<<<< HEAD
+=======
+tensorflow
+>>>>>>> 4945f89b8739df51600f0e948db58140307e855b
 scikit-learn
 pillow
