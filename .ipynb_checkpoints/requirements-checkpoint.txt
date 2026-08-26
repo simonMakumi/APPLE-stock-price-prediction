@@ -1,6 +1,0 @@
-streamlit
-numpy
-pandas
-keras 3.4.1
-scikit-learn
-pillow

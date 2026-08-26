@@ -22,7 +22,55 @@ We built:
 - Random Forest with GridsearchCV
 - Facebook Prophet
 - Facebook Prophet with regressors
-- LTSM model.
+- LSTM model
+
+## Results
+
+Test period: the last 20% of the series, 784 trading days, prices between $125 and $235.
+
+| Model | RMSE | MAE |
+|---|---|---|
+| **Naive baseline** (today's close = yesterday's close) | **2.77** | **2.07** |
+| LSTM | 5.15 | 4.01 |
+| Prophet | 7.50 (in-sample) | — |
+| Prophet with regressors | 7.49 (in-sample) | — |
+
+**No model beats the naive baseline.** Assuming the price does not change overnight is
+roughly twice as accurate as the LSTM.
+
+### A correction to the earlier version
+
+This notebook previously reported an LSTM RMSE of **2.22** and concluded the model showed
+"excellent performance". That figure came from
+
+```python
+rmse = np.sqrt(np.mean(predictions - y_test) ** 2)   # wrong
+```
+
+which squares the *mean* error instead of the *mean squared* error. Positive and negative
+errors cancel before squaring, so the result is the mean bias, not the RMSE. The correct
+line is
+
+```python
+rmse = np.sqrt(np.mean((predictions - y_test) ** 2))  # 5.15
+```
+
+2.22 was the model's average overshoot, not its typical error.
+
+The two Prophet numbers were also measured across the fitted history rather than a held-out
+period, so they describe the fit rather than forecasting accuracy and are not comparable to
+the LSTM figure. The earlier conclusion put an in-sample number next to an out-of-sample one.
+
+### What that leaves
+
+Daily closing prices are close to a random walk. An LSTM given only 60 days of past prices
+learns to repeat the most recent value with a lag, which tracks the line closely enough to
+look convincing on a chart while carrying no real information. Beating the baseline would
+need inputs the price series does not contain: volume dynamics, volatility, earnings, news.
+
+The wider lesson is the one about baselines. Without one there is no way to know whether an
+RMSE of 5.15 is good, and this project concluded it was excellent when it was worse than
+doing nothing at all.
 
 ## Deployment
 Included in the repository is a streamlit user interface that serves as the rudimentary method through which users shall interact with our model.
